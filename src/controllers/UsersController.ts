@@ -16,7 +16,7 @@ class UsersController {
     const { name, email, password } = request.body;
 
     try {
-      const result = await this.usersService.create({name, email, password});
+      const result = await this.usersService.create({ name, email, password });
 
       return response.status(201).json(result);
     } catch (error) {
@@ -25,6 +25,17 @@ class UsersController {
   }
 
   auth() {}
+
+  update(request: Request, response: Response, next: NextFunction) {
+    const { name, oldPassword, newPassword } = request.body;
+
+    
+
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export { UsersController };
