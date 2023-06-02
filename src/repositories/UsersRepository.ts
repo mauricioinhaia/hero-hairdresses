@@ -12,12 +12,26 @@ class UsersRepository {
     });
     return result;
   }
+
   async findUserByEmail(email: string) {
     const result = await prisma.users.findUnique({
       where: {
         email,
       },
     });
+    return result;
+  }
+
+  async update(name: string, newPassword: string, avatar_url: string) {
+    const result = await prisma.users.update({
+      where: {},
+      data: {
+        name,
+        password: newPassword,
+        avatar_url,
+      },
+    });
+
     return result;
   }
 }

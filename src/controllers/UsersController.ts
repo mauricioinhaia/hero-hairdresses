@@ -26,12 +26,18 @@ class UsersController {
 
   auth() {}
 
-  update(request: Request, response: Response, next: NextFunction) {
+  async update(request: Request, response: Response, next: NextFunction) {
     const { name, oldPassword, newPassword } = request.body;
 
-    
-
     try {
+
+      const result = await this.usersService.update({
+        name,
+        oldPassword,
+        newPassword,
+        avatar_url: request.file,
+      });
+      return response.status(200).json(result);
     } catch (error) {
       next(error);
     }
