@@ -14,8 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const usersRoutes = new UsersRoutes().getRoutes();
 
-app.use("/users", usersRoutes);
-
 app.use(
   (err: Error, request: Request, response: Response, next: NextFunction) => {
     if (err instanceof Error) {
