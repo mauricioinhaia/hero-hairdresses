@@ -9,9 +9,7 @@ class UsersRoutes {
     this.usersController = new UsersController();
   }
 
-  
-
-  getRoutes() {
+    getRoutes() {
     this.router.post(
       "/",
       this.usersController.store.bind(this.usersController)
