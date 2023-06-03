@@ -11,9 +11,6 @@ class SchedulesService {
   async create({ name, phone, date }: ICreate) {
     const dateFormatted = new Date(date);
     const hourStart = startOfHour(dateFormatted);
-    console.log("datejson " + date);
-    console.log("formatada " + dateFormatted);
-    console.log("start " + hourStart);
 
     if (isBefore(hourStart, new Date())) {
       throw new Error("It is not Allowed to Schedule a old Date");
