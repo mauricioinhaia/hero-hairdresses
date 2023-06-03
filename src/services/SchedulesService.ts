@@ -30,6 +30,32 @@ class SchedulesService {
 
     return create;
   }
+
+  async index(date: Date) {
+    const result = await this.schedulesRepository.findAll(date);
+
+    return result;
+  }
+
+  async update(id: string, date: Date) {
+    const dateFormatted = new Date(date);
+    const hourStart = startOfHour(dateFormatted);
+    
+    if (isBefore(hourStart, new Date())) {
+      throw new Error("It is not Allowed to Schedule a old Date");
+    }
+
+    const checkIsAvailable = await this.schedulesRepository.find(hourStart);
+
+    if (checkIsAvailable) {
+      throw new Error("Schedule date is not Available");
+    }
+
+    const result = await this.schedulesRepository.update(id, hourStart);
+    return result;
+  }
+
+  async delete() {}
 }
 
 export { SchedulesService };
