@@ -1,5 +1,5 @@
 import { ICreate } from "../interfaces/SchedulesInterface";
-import { isBefore, startOfHour } from "date-fns";
+import { isBefore, startOfHour, getHours } from "date-fns";
 import { SchedulesRepository } from "../repositories/ServicesRepository";
 class SchedulesService {
   private schedulesRepository: SchedulesRepository;
@@ -11,6 +11,11 @@ class SchedulesService {
   async create({ name, phone, date }: ICreate) {
     const dateFormatted = new Date(date);
     const hourStart = startOfHour(dateFormatted);
+    const hour = getHours(hourStart);
+
+    if(hour <= 9 || hour >= 19){
+        throw new Error("Create Schedule Between 9AM and 19PM")
+    } 
 
     if (isBefore(hourStart, new Date())) {
       throw new Error("It is not Allowed to Schedule a old Date");
@@ -40,7 +45,12 @@ class SchedulesService {
   async update(id: string, date: Date) {
     const dateFormatted = new Date(date);
     const hourStart = startOfHour(dateFormatted);
-    
+    const hour = getHours(hourStart);
+
+    if(hour <= 9 || hour >= 19){
+        throw new Error("Create Schedule Between 9AM and 19PM")
+    } 
+
     if (isBefore(hourStart, new Date())) {
       throw new Error("It is not Allowed to Schedule a old Date");
     }
