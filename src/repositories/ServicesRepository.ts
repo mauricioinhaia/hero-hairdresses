@@ -14,9 +14,9 @@ class SchedulesRepository {
     return result;
   }
 
-  async find(date: Date) {
+  async find(date: Date, user_id: string) {
     const result = await prisma.schedule.findFirst({
-      where: { date },
+      where: { date, user_id },
     });
     return result;
   }
