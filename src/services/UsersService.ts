@@ -4,7 +4,7 @@ import { UsersRepository } from "../repositories/UsersRepository";
 import { v4 as uuid } from "uuid";
 import { s3 } from "../config/aws";
 import { prisma } from "../database/prisma";
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 
 class UsersService {
   private usersRepository: UsersRepository;
@@ -98,13 +98,39 @@ class UsersService {
       expiresIn: 60 * 15,
     });
 
+    const refreshToken = sign({ email }, secretKey, {
+      subject: findUser.id,
+      expiresIn: "7d",
+    });
+
     return {
       token,
+      refresh_token: refreshToken,
       user: {
         name: findUser.name,
         email: findUser.email,
       },
     };
+  }
+
+  async refresh(refresh_token: string) {
+    if (!refresh_token) {
+      throw new Error("Refresh Token Missing");
+    }
+
+    let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN;
+
+    if (!secretKey) {
+      throw new Error("There is no Refresh Token Key");
+    }
+
+    const verifyRefreshToken = verify(refresh_token, secretKey);
+
+    const { sub } = verifyRefreshToken;
+
+    const newToken = sign({ sub }, secretKey, { expiresIn: 60 * 15 });
+
+    return { token: newToken };
   }
 }
 
