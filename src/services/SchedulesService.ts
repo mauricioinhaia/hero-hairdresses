@@ -11,7 +11,8 @@ class SchedulesService {
   async create({ name, phone, date, user_id }: ICreate) {
     const dateFormatted = new Date(date);
     const hourStart = startOfHour(dateFormatted);
-    const hour = getHours(hourStart);
+    const timezoneOffset = hourStart.getTimezoneOffset() / 60;
+    const hour = (hourStart.getHours() + timezoneOffset) % 24;
 
     if (hour <= 9 || hour >= 19) {
       throw new Error("Create Schedule Between 9AM and 19PM");
@@ -49,7 +50,8 @@ class SchedulesService {
   async update(id: string, date: Date, user_id: string) {
     const dateFormatted = new Date(date);
     const hourStart = startOfHour(dateFormatted);
-    const hour = getHours(hourStart);
+    const timezoneOffset = hourStart.getTimezoneOffset() / 60;
+    const hour = (hourStart.getHours() + timezoneOffset) % 24;
 
     if (hour <= 9 || hour >= 19) {
       throw new Error("Create Schedule Between 9AM and 19PM");
