@@ -3,12 +3,13 @@ import { ICreate } from "../interfaces/SchedulesInterface";
 import { startOfDay, endOfDay } from "date-fns";
 
 class SchedulesRepository {
-  async create({ name, phone, date }: ICreate) {
+  async create({ name, phone, date, user_id }: ICreate) {
     const result = await prisma.schedule.create({
       data: {
         name,
         phone,
         date,
+        user_id,
       },
     });
     return result;
