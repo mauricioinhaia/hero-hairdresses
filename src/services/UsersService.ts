@@ -81,7 +81,7 @@ class UsersService {
       throw new Error("User or password invalid");
     }
 
-    const passwordMatch = compare(password, findUser.password);
+    const passwordMatch = await compare(password, findUser.password);
 
     if (!passwordMatch) {
       throw new Error("User or password invalid");
