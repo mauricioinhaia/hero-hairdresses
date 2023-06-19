@@ -78,27 +78,29 @@ class UsersService {
   async auth(email: string, password: string) {
     const findUser = await this.usersRepository.findUserByEmail(email);
     if (!findUser) {
-      throw new Error("User or password invalid");
+      throw new Error("User or password invalid.");
     }
-
     const passwordMatch = await compare(password, findUser.password);
 
     if (!passwordMatch) {
-      throw new Error("User or password invalid");
+      throw new Error("User or password invalid.");
     }
 
     let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN;
-
     if (!secretKey) {
-      throw new Error("There is no Token Key");
+      throw new Error("There is no token key");
+    }
+    let secretKeyRefreshToken: string | undefined =
+      process.env.ACCESS_KEY_TOKEN_REFRESH;
+    if (!secretKeyRefreshToken) {
+      throw new Error("There is no token key");
     }
 
     const token = sign({ email }, secretKey, {
       subject: findUser.id,
       expiresIn: 60 * 15,
     });
-
-    const refreshToken = sign({ email }, secretKey, {
+    const refreshToken = sign({ email }, secretKeyRefreshToken, {
       subject: findUser.id,
       expiresIn: "7d",
     });
@@ -109,28 +111,36 @@ class UsersService {
       user: {
         name: findUser.name,
         email: findUser.email,
+        avatar_url: findUser.avatar_url,
       },
     };
   }
 
   async refresh(refresh_token: string) {
     if (!refresh_token) {
-      throw new Error("Refresh Token Missing");
+      throw new Error("Refresh token missing");
+    }
+    let secretKeyRefresh: string | undefined =
+      process.env.ACCESS_KEY_TOKEN_REFRESH;
+    if (!secretKeyRefresh) {
+      throw new Error("There is no refresh token key");
     }
 
     let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN;
-
     if (!secretKey) {
-      throw new Error("There is no Refresh Token Key");
+      throw new Error("There is no refresh token key");
     }
-
-    const verifyRefreshToken = verify(refresh_token, secretKey);
+    const verifyRefreshToken = await verify(refresh_token, secretKeyRefresh);
 
     const { sub } = verifyRefreshToken;
 
-    const newToken = sign({ sub }, secretKey, { expiresIn: 60 * 15 });
-
-    return { token: newToken };
+    const newToken = sign({ sub }, secretKey, {
+      expiresIn: 60 * 15,
+    });
+    const refreshToken = sign({ sub }, secretKeyRefresh, {
+      expiresIn: "7d",
+    });
+    return { token: newToken, refresh_token: refreshToken };
   }
 }
 
