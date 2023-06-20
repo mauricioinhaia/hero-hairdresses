@@ -33,10 +33,10 @@ class SchedulesRoutes {
     );
 
     this.router.delete(
-        "/",
-        this.authMiddleware.auth.bind(this.authMiddleware),
-        this.schedulesController.update.bind(this.schedulesController)
-      );
+      "/:id",
+      this.authMiddleware.auth.bind(this.authMiddleware),
+      this.schedulesController.delete.bind(this.schedulesController)
+    );
 
     return this.router;
   }

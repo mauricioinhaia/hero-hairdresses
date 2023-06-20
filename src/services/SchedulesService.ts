@@ -74,7 +74,16 @@ class SchedulesService {
     return result;
   }
 
-  async delete() {}
-}
+  async delete(id: string) {
+    const checkExists = await this.schedulesRepository.findById(id);
 
+    if (!checkExists) {
+      throw new Error("Schedule doenst exists");
+    }
+
+    const result = await this.schedulesRepository.delete(id);
+
+    return result;
+  }
+}
 export { SchedulesService };
